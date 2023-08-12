@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import * as apiusers from "../../api/endpoints/users";
+import * as apiemployees from "../../api/endpoints/employees";
 
 export default function AdminPage() {
   const [users, setUsers] = useState([]);
   const [oldUsers, setOldUsers] = useState([]);
-  const [newUserId, setNewUserId] = useState('')
+  const [newUserId, setNewUserId] = useState("");
 
   useEffect(() => {
     const get_users = async () => {
@@ -17,6 +18,9 @@ export default function AdminPage() {
 
   const [newUserRole, setNewUserRole] = useState("user");
   const changeNewUserRoleHandler = (val) => {
+    if(val==='employee'){
+        setAddNewUserAsEmployee(true);
+    }
     setNewUserRole(val);
   };
 
@@ -72,23 +76,49 @@ export default function AdminPage() {
     setUsers(newusers);
   };
 
-  const [newUserUserame, setNewUserUsername] = useState('')
-  const [newUserPassword, setNewUserPassword] = useState('')
-  const [newUserConfirmPassword, setNewUserConfirmPassword] = useState('')
-  const addUserHandler = async () => {
-    if(newUserConfirmPassword!==newUserPassword){
-        return;
-    }
-    if(newUserPassword.length < 5){
-        return;
-    }
-    const u = await apiusers.add({username: newUserUserame, password: newUserPassword, role: newUserRole})
-    setNewUserUsername('')
-    setNewUserConfirmPassword('')
-    setNewUserPassword('')
-    setNewUserId(u.id)
-  }
+  const [newUserUserame, setNewUserUsername] = useState("");
+  const [newUserPassword, setNewUserPassword] = useState("");
+  const [newUserConfirmPassword, setNewUserConfirmPassword] = useState("");
 
+  const [newUserFirstName, setNewUserFirstName] = useState("");
+  const [newUserLastName, setNewUserLastName] = useState("");
+  const [newUserActive, setNewUserActive] = useState("Y");
+
+  const [addNewUserAsEmployee, setAddNewUserAsEmployee] = useState(false)
+  const addUserHandler = async () => {
+    if (addNewUserAsEmployee) {
+      if (!newUserFirstName || !newUserLastName) {
+        return;
+      }
+    }
+    if (newUserConfirmPassword !== newUserPassword) {
+      return;
+    }
+    if (newUserPassword.length < 5) {
+      return;
+    }
+    const u = await apiusers.add({
+      username: newUserUserame,
+      password: newUserPassword,
+      role: newUserRole,
+    });
+    if (newUserRole === "employee") {
+      apiemployees.add({
+        first_name: newUserFirstName,
+        last_name: newUserLastName,
+        active: newUserActive,
+      });
+    }
+
+    setNewUserUsername("");
+    setNewUserConfirmPassword("");
+    setNewUserPassword("");
+    setNewUserFirstName('');
+    setNewUserLastName('');
+    setNewUserRole('user');
+    setAddNewUserAsEmployee(false);
+    setNewUserId(u.id);
+  };
 
   return (
     <>
@@ -161,16 +191,37 @@ export default function AdminPage() {
         </tbody>
       </table>
       <button disabled={!tableDirty} onClick={cancelHandler}>
-        Cancel
+        Undo
       </button>
       <button disabled={!tableDirty} onClick={saveHandler}>
-        Save Changes
+        Save
       </button>
 
       <h3>Add New User</h3>
-      <input type="text" placeholder="username" value={newUserUserame} onChange={(el)=>{setNewUserUsername(el.target.value)}} />
-      <input type="password" placeholder="password" value={newUserPassword} onChange={(el)=>{setNewUserPassword(el.target.value)}} />
-      <input type="password" placeholder="confirm password" value={newUserConfirmPassword} onChange={(el)=>{setNewUserConfirmPassword(el.target.value)}} />
+      <input
+        type="text"
+        placeholder="username"
+        value={newUserUserame}
+        onChange={(el) => {
+          setNewUserUsername(el.target.value);
+        }}
+      />
+      <input
+        type="password"
+        placeholder="password"
+        value={newUserPassword}
+        onChange={(el) => {
+          setNewUserPassword(el.target.value);
+        }}
+      />
+      <input
+        type="password"
+        placeholder="confirm password"
+        value={newUserConfirmPassword}
+        onChange={(el) => {
+          setNewUserConfirmPassword(el.target.value);
+        }}
+      />
       <select
         value={newUserRole}
         onChange={(el) => {
@@ -181,6 +232,35 @@ export default function AdminPage() {
         <option value="admin">admin</option>
         <option value="employee">employee</option>
       </select>
+      Add User as Employee
+      <input type="checkbox" checked={addNewUserAsEmployee}  onChange={(el)=>{setAddNewUserAsEmployee(el.target.checked)}} />
+      {(newUserRole === "employee" || addNewUserAsEmployee)? (
+        <>
+          <input
+            type="text"
+            placeholder="first name"
+            onChange={(el) => {
+              setNewUserFirstName(el.target.value);
+            }}
+          ></input>
+          <input
+            type="text"
+            placeholder="last name"
+            onChange={(el) => {
+              setNewUserLastName(el.target.value);
+            }}
+          ></input>
+          Active{" "}
+          <select value={newUserActive}
+            onChange={(el) => {
+              setNewUserActive(el.target.value);
+            }}
+          >
+            <option value="Y">Y</option>
+            <option value="N">N</option>
+          </select>
+        </>
+      ) : null}
       <button onClick={addUserHandler}>Add User</button>
     </>
   );
