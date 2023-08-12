@@ -1,6 +1,9 @@
 const sqlite3 = require("sqlite3");
 const express = require("express");
 const fs = require("fs");
+const cors = require('cors');
+
+
 
 function get_sql_string(sql_filename) {
   const dataSql = fs.readFileSync(`${sql_filename}.sql`).toString();
@@ -13,6 +16,9 @@ function get_sql_string(sql_filename) {
 
 var app = express();
 app.use(express.json());
+app.use(cors({
+  origin: '*'
+}));
 
 const db = new sqlite3.Database("./emp_database.db", (err) => {
   if (err) {
