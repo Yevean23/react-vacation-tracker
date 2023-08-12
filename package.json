@@ -1,0 +1,32 @@
+{
+  "name": "react-vacation-tracker",
+  "version": "1.0.0",
+  "description": "A comprehensive employee vacation management system made using SqERN (SQLite3, Express.js, React.js, Node.js). Includes an admin panel, logins, and reports.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yevean23/react-vacation-tracker.git"
+  },
+  "keywords": [
+    "react",
+    "vacation",
+    "tracking",
+    "tracker",
+    "admin",
+    "panel"
+  ],
+  "author": "yevgeniy vovk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yevean23/react-vacation-tracker/issues"
+  },
+  "homepage": "https://github.com/Yevean23/react-vacation-tracker#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "sqlite3": "^5.1.6"
+  }
+}
