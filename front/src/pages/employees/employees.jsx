@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import * as apiemployees from "../../api/endpoints/employees";
+import FullTable from "../../components/fulltable";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
@@ -48,7 +49,7 @@ export default function EmployeesPage() {
         apiemployees.update(empl);
       }
     });
-    setOldEmployees(employees)
+    setOldEmployees(employees);
     setTableDirty(false);
   };
   const cancelTableChangesHandler = () => {
@@ -84,96 +85,7 @@ export default function EmployeesPage() {
       <h1>Employees</h1>
       <h3>All Employees</h3>
 
-      <table>
-        <tbody>
-          <tr>
-            {Object.keys({ ...employees[0] }).map((value, i) => {
-              return <td key={i}>{value}</td>;
-            })}
-          </tr>
-          {employees.map((el, i) => {
-            return (
-              <tr
-                key={i}
-                onChange={() => {
-                  setTableDirty(true);
-                }}
-              >
-                {Object.values({ ...el }).map((value, ii) => {
-                  if (Object.keys({ ...el })[ii] === "id") {
-                    return <td key={ii}>{value}</td>;
-                  }
-                  if (Object.keys({ ...el })[ii] === "active") {
-                    return (
-                      <td key={ii}>
-                        <select
-                          value={value}
-                          onChange={(ee) => {
-                            updateActiveHandler(el, ee.target.value);
-                          }}
-                        >
-                          <option value="Y">Y</option>
-                          <option value="N">N</option>
-                        </select>
-                      </td>
-                    );
-                  }
-                  return (
-                    <td key={ii}>
-                      <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => {
-                          updateTextTableHandler(
-                            i,
-                            el.id,
-                            Object.keys({ ...el })[ii],
-                            e.target.value
-                          );
-                        }}
-                      ></input>
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <button disabled={!tableDirty} onClick={cancelTableChangesHandler}>
-        Undo
-      </button>
-      <button disabled={!tableDirty} onClick={saveTableChangesHandler}>
-        Save
-      </button>
-
-      <h3>Add New Employee</h3>
-      <input
-        type="text"
-        placeholder="first name"
-        value={newEmployeeFirstName}
-        onChange={(e) => {
-          setNewEmployeeFirstName(e.target.value);
-        }}
-      />
-      <input
-        type="text"
-        placeholder="last name"
-        value={newEmployeeLastName}
-        onChange={(e) => {
-          setNewEmployeeLastName(e.target.value);
-        }}
-      />
-      <select
-        value={newEmployeeActive}
-        onChange={(e) => {
-          setNewEmployeeActive(e.target.value);
-        }}
-      >
-        <option value="Y">Active</option>
-        <option value="N">Not Active</option>
-      </select>
-      <button onClick={addEmployeeHandler}>Add Employee</button>
+      <FullTable api={apiemployees} />
     </>
   );
 }

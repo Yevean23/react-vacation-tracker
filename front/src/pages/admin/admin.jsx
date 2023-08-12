@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import * as apiusers from "../../api/endpoints/users";
 import * as apiemployees from "../../api/endpoints/employees";
+import FullTable from "../../components/fulltable";
 
 export default function AdminPage() {
   const [users, setUsers] = useState([]);
@@ -125,143 +126,7 @@ export default function AdminPage() {
       <h1>Admin</h1>
 
       <h3>Users</h3>
-      <table>
-        <tbody>
-          <tr>
-            {Object.keys({ ...users[0] }).map((value, i) => {
-              return <td key={i}>{value}</td>;
-            })}
-          </tr>
-          {users.map((el, i) => {
-            return (
-              <tr
-                key={i}
-                onChange={() => {
-                  setTableDirty(true);
-                }}
-              >
-                {Object.values({ ...el }).map((e, i) => {
-                  if (Object.keys({ ...el })[i] === "role") {
-                    return (
-                      <td key={i}>
-                        <select
-                          value={e}
-                          onChange={(ee) => {
-                            updateUserRoleHandler(el, ee.target.value);
-                          }}
-                        >
-                          <option value="user">user</option>
-                          <option value="admin">admin</option>
-                          <option value="employee">employee</option>
-                        </select>
-                      </td>
-                    );
-                  }
-                  if (Object.keys({ ...el })[i] === "id") {
-                    return <td key={i}>{e}</td>;
-                  }
-                  if (Object.keys({ ...el })[i] === "password") {
-                    return (
-                      <td key={i}>
-                        <input
-                          type="password"
-                          value={e}
-                          onChange={(ee) => {
-                            updatePasswordHandler(el, ee.target.value);
-                          }}
-                        ></input>
-                      </td>
-                    );
-                  }
-                  return (
-                    <td key={i}>
-                      <input
-                        type="text"
-                        value={e}
-                        onChange={(ee) => {
-                          updateUsernameHandler(el, ee.target.value);
-                        }}
-                      ></input>
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <button disabled={!tableDirty} onClick={cancelHandler}>
-        Undo
-      </button>
-      <button disabled={!tableDirty} onClick={saveHandler}>
-        Save
-      </button>
-
-      <h3>Add New User</h3>
-      <input
-        type="text"
-        placeholder="username"
-        value={newUserUserame}
-        onChange={(el) => {
-          setNewUserUsername(el.target.value);
-        }}
-      />
-      <input
-        type="password"
-        placeholder="password"
-        value={newUserPassword}
-        onChange={(el) => {
-          setNewUserPassword(el.target.value);
-        }}
-      />
-      <input
-        type="password"
-        placeholder="confirm password"
-        value={newUserConfirmPassword}
-        onChange={(el) => {
-          setNewUserConfirmPassword(el.target.value);
-        }}
-      />
-      <select
-        value={newUserRole}
-        onChange={(el) => {
-          changeNewUserRoleHandler(el.target.value);
-        }}
-      >
-        <option value="user">user</option>
-        <option value="admin">admin</option>
-        <option value="employee">employee</option>
-      </select>
-      Add User as Employee
-      <input type="checkbox" checked={addNewUserAsEmployee}  onChange={(el)=>{setAddNewUserAsEmployee(el.target.checked)}} />
-      {(newUserRole === "employee" || addNewUserAsEmployee)? (
-        <>
-          <input
-            type="text"
-            placeholder="first name"
-            onChange={(el) => {
-              setNewUserFirstName(el.target.value);
-            }}
-          ></input>
-          <input
-            type="text"
-            placeholder="last name"
-            onChange={(el) => {
-              setNewUserLastName(el.target.value);
-            }}
-          ></input>
-          Active{" "}
-          <select value={newUserActive}
-            onChange={(el) => {
-              setNewUserActive(el.target.value);
-            }}
-          >
-            <option value="Y">Y</option>
-            <option value="N">N</option>
-          </select>
-        </>
-      ) : null}
-      <button onClick={addUserHandler}>Add User</button>
+        <FullTable api={apiusers} />
     </>
   );
 }
