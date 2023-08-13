@@ -1,8 +1,13 @@
-import { SERVER_URL } from "./config";
+const SERVER_URL_LOCAL = "http://localhost";
+//const SERVER_URL_TKD_LAPTOP = "http://10.49.25.69";
 
-const ENDPOINT = __filename;
+const SERVER_PORT = "";
 
-const fetch_employees = async () => {
+const SERVER_URL = SERVER_URL_LOCAL + SERVER_PORT;
+
+const ENDPOINT = "vacation_records";
+
+export const get_all = async () => {
   let res = await fetch(`${SERVER_URL}/endpoints/${ENDPOINT}`, {
     method: "get",
   });
@@ -11,7 +16,45 @@ const fetch_employees = async () => {
   return bod;
 };
 
-const add_employee = async (employee) => {
+export const get_filtered = async (filter) => {
+  let res = await fetch(`${SERVER_URL}/endpoints/${ENDPOINT}/filter`, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ filter: filter }),
+  });
+  let bod = await res.json();
+  console.log("fetched", bod);
+  return bod;
+};
+
+export const get_joined = async ({
+  join_type,
+  rtable,
+  filter,
+  select_cols,
+}) => {
+  let res = await fetch(`${SERVER_URL}/endpoints/${ENDPOINT}/join`, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      select_cols: select_cols,
+      join_type: join_type,
+      rtable: rtable,
+      filter: filter,
+    }),
+  });
+  let bod = await res.json();
+  console.log("fetched joined", bod);
+  return bod;
+};
+
+export const add = async (employee) => {
   let res = await fetch(`${SERVER_URL}/endpoints/${ENDPOINT}`, {
     method: "post",
     headers: {
@@ -25,7 +68,7 @@ const add_employee = async (employee) => {
   return bod;
 };
 
-const update_employee = async (employee) => {
+export const update = async (employee) => {
   let res = await fetch(`${SERVER_URL}/endpoints/${ENDPOINT}`, {
     method: "put",
     headers: {
@@ -39,7 +82,7 @@ const update_employee = async (employee) => {
   return bod;
 };
 
-const delete_employee = async ({ employee_id }) => {
+export const remove = async ({ employee_id }) => {
   let res = await fetch(`${SERVER_URL}/endpoints/${ENDPOINT}/${employee_id}`, {
     method: "delete",
     headers: {
@@ -51,23 +94,3 @@ const delete_employee = async ({ employee_id }) => {
   console.log("deleted", bod);
   return bod;
 };
-
-const test = async () => {
-  await fetch_employees();
-  let new_emp = await add_employee({ first_name: "Eugene", last_name: "Vovk" });
-  new_emp = new_emp.employee_id;
-  await fetch_employees();
-  await update_employee({
-    first_name: "Eugene",
-    last_name: "Vovk",
-    active: "N",
-    employee_id: new_emp,
-  });
-  await fetch_employees();
-  await delete_employee({ employee_id: new_emp });
-  await fetch_employees();
-};
-
-if (require.main === module) {
-  test();
-}

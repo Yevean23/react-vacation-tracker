@@ -31,22 +31,22 @@ values ('Long-term Vacation', 'V', 'green'),
     ('Not Employeed', 'N', 'gray');
 create table month_records(
     id integer primary key not null,
-    employee int not null,
+    employee_id int not null,
     month int not null,
     year int not null
 );
-insert into month_records (employee, year, month)
+insert into month_records (employee_id, year, month)
 values (1, 2023, 1),
     (2, 2023, 1);
 create table vacation_records(
     id integer primary key not null,
-    employee int not null,
+    employee_id int not null,
     year int not null,
     month int not null,
     day int not null,
     type int not null
 );
-insert into vacation_records (employee, year, month, day, type)
+insert into vacation_records (employee_id, year, month, day, type)
 values (1, 2023, 1, 1, 3),
     (1, 2023, 1, 2, 3),
     (2, 2023, 1, 1, 4);

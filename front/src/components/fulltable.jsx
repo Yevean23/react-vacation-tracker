@@ -109,9 +109,26 @@ export default function FullTable({ api }) {
             return (
               <tr key={i}>
                 {Object.values({ ...el }).map((valuej, j) => {
+                  if (Object.keys({ ...el })[j] === "color") {
+                    return (
+                      <td key={i+j}>
+                        <input
+                          type="color"
+                          value={valuej}
+                          onChange={(input_el) => {
+                            updateTableHandler(
+                              input_el.target.value,
+                              el,
+                              Object.keys({ ...el })[j]
+                            );
+                          }}
+                        />
+                      </td>
+                    );
+                  }
                   if (Object.keys({ ...el })[j] === "active") {
                     return (
-                      <td key={j}>
+                      <td key={i+j}>
                         <select
                           value={valuej}
                           onChange={(input_el) => {

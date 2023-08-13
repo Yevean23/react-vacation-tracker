@@ -1,9 +1,7 @@
 const sqlite3 = require("sqlite3");
 const express = require("express");
 const fs = require("fs");
-const cors = require('cors');
-
-
+const cors = require("cors");
 
 function get_sql_string(sql_filename) {
   const dataSql = fs.readFileSync(`${sql_filename}.sql`).toString();
@@ -16,9 +14,11 @@ function get_sql_string(sql_filename) {
 
 var app = express();
 app.use(express.json());
-app.use(cors({
-  origin: '*'
-}));
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 const db = new sqlite3.Database("./emp_database.db", (err) => {
   if (err) {
@@ -26,7 +26,7 @@ const db = new sqlite3.Database("./emp_database.db", (err) => {
   } else {
     db.exec(
       `
-    create table users (
+      create table users (
         id integer primary key not null,
         username text not null,
         password text not null,
@@ -59,22 +59,22 @@ const db = new sqlite3.Database("./emp_database.db", (err) => {
         ('Not Employeed', 'N', 'gray');
     create table month_records(
         id integer primary key not null,
-        employee int not null,
+        employee_id int not null,
         month int not null,
         year int not null
     );
-    insert into month_records (employee, year, month)
+    insert into month_records (employee_id, year, month)
     values (1, 2023, 1),
         (2, 2023, 1);
     create table vacation_records(
         id integer primary key not null,
-        employee int not null,
+        employee_id int not null,
         year int not null,
         month int not null,
         day int not null,
         type int not null
     );
-    insert into vacation_records (employee, year, month, day, type)
+    insert into vacation_records (employee_id, year, month, day, type)
     values (1, 2023, 1, 1, 3),
         (1, 2023, 1, 2, 3),
         (2, 2023, 1, 1, 4);
@@ -122,6 +122,76 @@ app.post("/endpoints/:dtable", (req, res, next) => {
       });
     }
   );
+});
+
+app.post("/endpoints/:dtable/filter", (req, res, next) => {
+  const exec_string = `SELECT * FROM ${req.params.dtable} where ${Object.keys(
+    req.body.filter
+  )
+    .map((k, i) => {
+      return `${k} = ?`;
+    })
+    .join(" AND ")} ;`;
+  console.log(exec_string);
+  const varArr = Object.values(req.body.filter).map((p, i) => {
+    return p;
+  });
+
+  console.log(varArr);
+  db.all(exec_string, varArr, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    console.log(rows);
+    res.status(200).json([...rows]);
+  });
+});
+
+app.post("/endpoints/:dtable/join", (req, res, next) => {
+  let exec_string = "";
+
+  let varArr = [];
+  let select_cols = "*";
+  if(req.body.select_cols){
+    select_cols = req.body.select_cols.join(', ');
+  }
+  if (req.body.filter) {
+    exec_string = `
+    SELECT ${select_cols}
+    FROM ${req.params.dtable}
+    ${req.body.join_type} JOIN ${req.body.rtable}
+    ON ${req.params.dtable}.${req.body.rtable.slice(0, -1)}_id = ${req.body.rtable}.id
+    WHERE ${Object.keys(req.body.filter)
+      .map((k, i) => {
+        return `${k} = ?`;
+      })
+      .join(" AND ")};
+    `;
+    varArr = Object.values(req.body.filter).map((p, i) => {
+      return p;
+    });
+  } else {
+    exec_string = `
+    SELECT ${select_cols}
+    FROM ${req.params.dtable}
+    ${req.body.join_type} JOIN ${req.body.rtable}
+    ON ${req.params.dtable}.${req.body.rtable.slice(0, -1)}_id = ${
+      req.body.rtable
+    }.id;
+    `;
+  }
+
+  //console.log(exec_string);
+  //console.log(varArr);
+  db.all(exec_string, varArr, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    console.log(rows);
+    res.status(200).json([...rows]);
+  });
 });
 
 app.put("/endpoints/:dtable", (req, res, next) => {
