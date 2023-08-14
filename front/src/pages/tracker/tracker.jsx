@@ -7,11 +7,6 @@ export default function TrackerPage() {
   const [month, setMonth] = useState(1);
   const [year, setYear] = useState(2023);
 
-  const [rows, setRows] = useState([]);
-  const updateRowsHandler = (dat) => {
-    console.log("dat", dat);
-    setRows(dat);
-  };
   return (
     <>
       <h1>Vacaction Tracker</h1>
@@ -65,96 +60,22 @@ export default function TrackerPage() {
 
       <br />
 
-      <JoinTable key={rows}
+      {/* <JoinTable
         api={apimonthrecords}
-        rtable="employees"
+        rtable={"employees"}
         filter={{ month: month, year: year }}
-        select_cols={["first_name", "last_name"]}
-        updateRowsHandler={(w) => {
-          updateRowsHandler();
-        }}
-      />
-
-      <FullMonthTable key={rows}
+        select_cols={["*"]}
+        //select_cols={["month_records.employee_id","first_name", "last_name"]}
+      /> */}
+      <JoinTable
         api={apivacationrecords}
+        rtable={"month_records"}
         filter={{ month: month, year: year }}
-        rows={rows}
+        select_cols={["*"]}
+        //select_cols={["month_records.employee_id","first_name", "last_name"]}
       />
 
-      {/*
-      <button>Add All Active Employees</button>
-      <button>Copy From Last Month</button>
-      <input type="text" placeholder="search for employee"></input>
-      <select>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-      </select>
-      <button>Add Single</button>
 
-
-
-
-
-
-
-      <table>
-        <tr>
-          <td></td>
-          <td></td>
-          Days
-          <td></td>
-        </tr>
-        <tr>
-          <td>Employees</td>
-          <td></td>
-
-          <td>01</td>
-          <td>02</td>
-          <td>03</td>
-        </tr>
-        <tr>
-          <td>delete</td>
-          <td>First Name</td>
-          <td>Last Name</td>
-
-          <td>wed</td>
-          <td>thu</td>
-          <td>fri</td>
-        </tr>
-        <tr>
-          <td>
-            <button>del</button>
-          </td>
-          <td>huge</td>
-          <td>euge</td>
-
-          <td>
-            <select>
-              <option></option>
-              <option>F</option>
-              <option>M</option>
-            </select>
-          </td>
-          <td>
-            <select>
-              <option></option>
-              <option>F</option>
-              <option>M</option>
-            </select>
-          </td>
-          <td>
-            <select>
-              <option></option>
-              <option>F</option>
-              <option>M</option>
-            </select>
-          </td>
-        </tr>
-      </table>
-
-
-        */}
     </>
   );
 }

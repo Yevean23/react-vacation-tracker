@@ -1,26 +1,21 @@
 import { useEffect, useState } from "react";
 
-export default function JoinTable({ api, rtable, filter, select_cols, updateRowsHandler }) {
+export default function JoinTable({ api, rtable, filter, select_cols }) {
   const [currentTable, setCurrentTable] = useState([]);
   useEffect(() => {
     const getdata = async () => {
       const dat = await api.get_joined({
-        select_cols:[...select_cols,'month_records.employee_id'],
+        select_cols: select_cols ? [...select_cols] : [],
         join_type: "inner",
         rtable: rtable,
         filter: filter,
       });
       console.log('dat',dat);
-
-      const ele = Object.values(dat).map((a)=>{return a.employee_id});
-      console.log('ele',ele);
-      updateRowsHandler(ele);
-
       //delete dat.employee_id;
       setCurrentTable(dat);
     };
     getdata();
-  }, [api, filter, rtable, updateRowsHandler, select_cols]);
+  }, [api, filter, rtable, select_cols]);
   return (
     <>
       <table>

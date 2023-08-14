@@ -104,6 +104,7 @@ const update_data = {
 
 const test = async () => {
   await get_all();
+  /*
   let new_item = await add(add_data);
   let new_id = new_item.id;
   await get_all();
@@ -124,6 +125,7 @@ const test = async () => {
     rtable: "employees",
     filter: { month: 1, year: 2023 },
   });
+  */
 };
 
 if (require.main === module) {

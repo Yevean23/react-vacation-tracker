@@ -156,15 +156,17 @@ app.post("/endpoints/:dtable/join", (req, res, next) => {
   if(req.body.select_cols){
     select_cols = req.body.select_cols.join(', ');
   }
+    //ON ${req.params.dtable}.${req.body.rtable.slice(0, -1)}_id = ${req.body.rtable}.id
+
   if (req.body.filter) {
     exec_string = `
     SELECT ${select_cols}
     FROM ${req.params.dtable}
     ${req.body.join_type} JOIN ${req.body.rtable}
-    ON ${req.params.dtable}.${req.body.rtable.slice(0, -1)}_id = ${req.body.rtable}.id
+    ON ${req.params.dtable}.employee_id = ${req.body.rtable}.employee_id
     WHERE ${Object.keys(req.body.filter)
       .map((k, i) => {
-        return `${k} = ?`;
+        return `${req.params.dtable}.${k} = ?`;
       })
       .join(" AND ")};
     `;
@@ -176,14 +178,12 @@ app.post("/endpoints/:dtable/join", (req, res, next) => {
     SELECT ${select_cols}
     FROM ${req.params.dtable}
     ${req.body.join_type} JOIN ${req.body.rtable}
-    ON ${req.params.dtable}.${req.body.rtable.slice(0, -1)}_id = ${
-      req.body.rtable
-    }.id;
+    ON ${req.params.dtable}.${req.body.rtable.slice(0, -1)}_id = ${req.body.rtable}.id;
     `;
   }
 
-  //console.log(exec_string);
-  //console.log(varArr);
+  console.log(exec_string);
+  console.log(varArr);
   db.all(exec_string, varArr, (err, rows) => {
     if (err) {
       res.status(400).json({ error: err.message });

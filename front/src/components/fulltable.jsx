@@ -79,20 +79,12 @@ export default function FullTable({ api }) {
 
   return (
     <>
-      {Object.entries(newEntry).map((pair, i) => {
-        if (pair[0] === "id") return;
-        return (
-          <input
-            key={i}
-            value={newEntry[i]}
-            placeholder={pair[0]}
-            onChange={(input_el) => {
-              modifyNewEntryHandler(pair[0], input_el.target.value);
-            }}
-          ></input>
-        );
-      })}
-      <button onClick={addNewEntryHandler}>Add Entry</button>
+      <button disabled={!tableDirty} onClick={undoChangesHandler}>
+        Undo
+      </button>
+      <button disabled={!tableDirty} onClick={saveChangesHandler}>
+        Save
+      </button>
       <table>
         <thead></thead>
         <tbody
@@ -111,7 +103,7 @@ export default function FullTable({ api }) {
                 {Object.values({ ...el }).map((valuej, j) => {
                   if (Object.keys({ ...el })[j] === "color") {
                     return (
-                      <td key={i+j}>
+                      <td key={i + j}>
                         <input
                           type="color"
                           value={valuej}
@@ -128,7 +120,7 @@ export default function FullTable({ api }) {
                   }
                   if (Object.keys({ ...el })[j] === "active") {
                     return (
-                      <td key={i+j}>
+                      <td key={i + j}>
                         <select
                           value={valuej}
                           onChange={(input_el) => {
@@ -213,12 +205,20 @@ export default function FullTable({ api }) {
         </tbody>
         <tfoot></tfoot>
       </table>
-      <button disabled={!tableDirty} onClick={undoChangesHandler}>
-        Undo
-      </button>
-      <button disabled={!tableDirty} onClick={saveChangesHandler}>
-        Save
-      </button>
+      {Object.entries(newEntry).map((pair, i) => {
+        if (pair[0] === "id") return;
+        return (
+          <input
+            key={i}
+            value={newEntry[i]}
+            placeholder={pair[0]}
+            onChange={(input_el) => {
+              modifyNewEntryHandler(pair[0], input_el.target.value);
+            }}
+          ></input>
+        );
+      })}
+      <button onClick={addNewEntryHandler}>Add Entry</button>
     </>
   );
 }

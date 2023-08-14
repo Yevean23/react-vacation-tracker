@@ -12,6 +12,8 @@ import EmployeesPage from './pages/employees/employees';
 import TrackerPage from './pages/tracker/tracker';
 import ConfigPage from './pages/config/config';
 import App from './App';
+import MonthRecordsPage from './pages/month_records/monthrec';
+import VactionRecordsPage from './pages/vacation_records/vacationrec';
 
 
 const router = createBrowserRouter([
@@ -38,7 +40,17 @@ const router = createBrowserRouter([
       {
         path: "/config",
         Component : ConfigPage,
+      },
+      {
+        path: "/month_records",
+        Component : MonthRecordsPage,
+      },
+      {
+        path: "/vacation_records",
+        Component : VactionRecordsPage,
       }
+
+
     ]
 
 
